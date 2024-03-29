@@ -46,7 +46,12 @@ void writeToFileCSRBinary(graph* g) {
       int64_t i_, j_;
       double w_;
     };
-    
+     
+    struct edge_t {
+      int64_t tail_;
+      double weight_;
+    };
+
     int cmp(const void *e0, const void *e1)
     {
         struct tuple_t *ed0 = (struct tuple_t *)e0;
@@ -81,8 +86,10 @@ void writeToFileCSRBinary(graph* g) {
     
     for (i=0; i<nv; i++) {
       for (j=ec[i]; j<ec[i+1]; j++) {
-          struct tuple_t tup = elist[j];
-          fwrite(&tup,sizeof(struct tuple_t),1,outfp);
+          struct edge_t edge;
+          edge.tail_ = elist[j].j_;
+          edge.weight_ = elist[j].w_;
+          fwrite(&edge,sizeof(struct edge_t),1,outfp);
       }
     }
 

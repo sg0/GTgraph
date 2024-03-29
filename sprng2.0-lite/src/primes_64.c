@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 #include "primes_64.h"
 #include "primelist_64.h"
 
@@ -7,7 +9,7 @@
 #define NO  0
 #define NPRIMES 10000
 
-int primes[NPRIMES];
+int primes64[NPRIMES];
 
 #ifdef __STDC__
 int init_prime_64(void)
@@ -22,17 +24,17 @@ int init_prime_64()
     isprime = YES;
     
     for(j=0; j < obtained; j++)
-      if(i%primes[j] == 0)
+      if(i%primes64[j] == 0)
       {
 	isprime = NO;
 	break;
       }
-    else if(primes[j]*primes[j] > i)
+    else if(primes64[j]*primes64[j] > i)
       break;
 
     if(isprime == YES)
     {
-      primes[obtained] = i;
+      primes64[obtained] = i;
       obtained++;
     }
   }
@@ -109,7 +111,7 @@ unsigned int *prime_array;
     isprime = YES;
     largest -= 2;
     for(i=0; i<num_prime; i++)
-      if(largest%primes[i] == 0)
+      if(largest%primes64[i] == 0)
       {
 	isprime = NO;
 	break;

@@ -72,7 +72,7 @@ void parseUserInput(int argc, char** argv) {
                                         varSpecified = 1;
                                 }
                                 m = atol(optarg);
-                                fprintf(stderr, "m is set to %ld\n", n);
+                                fprintf(stderr, "m is set to %ld\n", m);
                                 updateLog();
                                 break;
 	
@@ -127,7 +127,11 @@ void getParams() {
 	SORT_TYPE = 0;
 	WRITE_TO_FILE = 1;
 
+#if defined(WRITE_CSR_BINARY)
+	strcpy(OUTFILE, "sample.bin");	
+#else
 	strcpy(OUTFILE, "sample.gr");	
+#endif
 	strcpy(LOGFILE, "log");	
 }
 

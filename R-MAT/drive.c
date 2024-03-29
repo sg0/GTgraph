@@ -17,7 +17,11 @@ int main(int argc, char** argv)
 	graphGen(&G);
 
 	/* utils.c */
+#if defined(WRITE_CSR_BINARY)
+	writeToFileCSRBinary(&G);
+#else
 	writeToFile(&G);
+#endif
 
 	/* Free memory */
 	if (STORE_IN_MEMORY) {

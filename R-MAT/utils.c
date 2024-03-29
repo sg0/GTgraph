@@ -25,6 +25,71 @@ void writeToFile(graph* g) {
 	}
 }
 
+#if defined(WRITE_CSR_BINARY)
+void writeToFileCSRBinary(graph* g) {
+
+	FILE* outfp;
+	LONG_T i, j, k;
+
+	if ((WRITE_TO_FILE) && (STORE_IN_MEMORY == 1)) {
+		fprintf(stderr, "Writing to binary CSR file ... ");
+		outfp = fopen(OUTFILE, "wb");
+    LONG_T nv = g->n, ne = 2*g->m;
+    
+    fwrite(&nv,sizeof(LONG_T),1,outfp);
+    fwrite(&ne,sizeof(LONG_T),1,outfp);
+
+    LONG_T* ec = (LONG_T*) malloc((nv+1)*sizeof(LONG_T));
+    LONG_T* ec_tmp = (LONG_T*) malloc((nv+1)*sizeof(LONG_T));
+    
+    struct tuple_t {
+      LONG_T i_, j_;
+      double w_;
+    };
+    
+    int cmp(const void *e0, const void *e1)
+    {
+        struct tuple_t *ed0 = (struct tuple_t *)e0;
+        struct tuple_t *ed1 = (struct tuple_t *)e1;
+        return ((ed0->i_ < ed1->i_) || ((ed0->i_ == ed1->i_) && (ed0->j_ < ed1->j_))); 
+    } 
+            
+    struct tuple_t* elist = (struct tuple_t*) malloc(ne*sizeof(struct tuple_t));
+        
+    memset(ec, 0, (nv+1)*sizeof(LONG_T));
+    memset(ec_tmp, 0, (nv+1)*sizeof(LONG_T));
+	
+    for (i=0; i<ne/2; i++)
+    {
+      elist[i].i_ = g->start[i];
+      elist[i].j_ = g->end[i];
+      elist[i].w_ = (double)g->w[i];
+      elist[i+1].i_ = g->end[i];
+      elist[i+1].j_ = g->start[i];
+      elist[i+1].w_ = (double)g->w[i];
+
+      ec_tmp[g->start[i]+1]+=1;
+      ec_tmp[g->end[i]+1]+=1;
+    }
+    
+    for (k=0; k<nv; k++)
+      ec[k+1] = ec[k] + ec_tmp[k];
+
+    qsort(elist,ne,sizeof(struct tuple_t),cmp);
+	   
+    fwrite(ec,sizeof(LONG_T),nv+1,outfp);
+    fwrite(elist,sizeof(struct tuple_t),ne,outfp);
+
+    fclose(outfp);
+		fprintf(stderr, "done\n");	
+
+    free(ec);
+    free(ec_tmp);
+    free(elist);
+	}
+}
+#endif
+
 void updateLog() {
 
 	FILE* logfp;

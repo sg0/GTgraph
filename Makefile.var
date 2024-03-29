@@ -1,15 +1,15 @@
 ####################
 # Common variables
 #################### 
-CC = icc
-#CC = gcc
+#CC = icc
+CC = gcc
 #CC = cc
 MAKE = make
 #MAKE = gmake
 
 # Compiling in 64-bit by default
-FLAGS = -O3 
-LDFLAGS = -O3
+FLAGS = -O3 -DWRITE_CSR_BINARY 
+LDFLAGS = -O3 
 
 LIBS = -L../sprng2.0-lite/lib -lsprng -lm
 INCS = -I../sprng2.0-lite/include

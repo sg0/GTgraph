@@ -11,6 +11,9 @@
 #define bits(x,k,j) ((x>>k) & ~(~0<<j))
 
 void writeToFile(graph*);
+#if defined(WRITE_CSR_BINARY)
+void writeToFileCSRBinary(graph*);
+#endif
 void updateLog(void);
 void countingSort(LONG_T*, LONG_T*, WEIGHT_T*, LONG_T);
 void countsort_aux(LONG_T q, LONG_T *lKey, LONG_T *lSorted, 

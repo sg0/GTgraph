@@ -29,21 +29,21 @@ void writeToFile(graph* g) {
 void writeToFileCSRBinary(graph* g) {
 
 	FILE* outfp;
-	LONG_T i, j, k;
+	int64_t i, j, k;
 
 	if ((WRITE_TO_FILE) && (STORE_IN_MEMORY == 1)) {
 		fprintf(stderr, "Writing to binary CSR file ... ");
 		outfp = fopen(OUTFILE, "wb");
-    LONG_T nv = g->n, ne = 2*g->m;
+    int64_t nv = (int64_t)g->n, ne = (int64_t)(2*g->m);
     
-    fwrite(&nv,sizeof(LONG_T),1,outfp);
-    fwrite(&ne,sizeof(LONG_T),1,outfp);
+    fwrite(&nv,sizeof(int64_t),1,outfp);
+    fwrite(&ne,sizeof(int64_t),1,outfp);
 
-    LONG_T* ec = (LONG_T*) malloc((nv+1)*sizeof(LONG_T));
-    LONG_T* ec_tmp = (LONG_T*) malloc((nv+1)*sizeof(LONG_T));
+    int64_t* ec = (int64_t*) malloc((nv+1)*sizeof(int64_t));
+    int64_t* ec_tmp = (int64_t*) malloc((nv+1)*sizeof(int64_t));
     
     struct tuple_t {
-      LONG_T i_, j_;
+      int64_t i_, j_;
       double w_;
     };
     
@@ -56,8 +56,8 @@ void writeToFileCSRBinary(graph* g) {
             
     struct tuple_t* elist = (struct tuple_t*) malloc(ne*sizeof(struct tuple_t));
         
-    memset(ec, 0, (nv+1)*sizeof(LONG_T));
-    memset(ec_tmp, 0, (nv+1)*sizeof(LONG_T));
+    memset(ec, 0, (nv+1)*sizeof(int64_t));
+    memset(ec_tmp, 0, (nv+1)*sizeof(int64_t));
 	
     for (i=0; i<ne/2; i++)
     {
@@ -77,8 +77,14 @@ void writeToFileCSRBinary(graph* g) {
 
     qsort(elist,ne,sizeof(struct tuple_t),cmp);
 	   
-    fwrite(ec,sizeof(LONG_T),nv+1,outfp);
-    fwrite(elist,sizeof(struct tuple_t),ne,outfp);
+    fwrite(&ec[0],sizeof(int64_t),nv+1,outfp);
+    
+    for (i=0; i<nv; i++) {
+      for (j=ec[i]; j<ec[i+1]; j++) {
+          struct tuple_t tup = elist[j];
+          fwrite(&tup,sizeof(struct tuple_t),1,outfp);
+      }
+    }
 
     fclose(outfp);
 		fprintf(stderr, "done\n");	
